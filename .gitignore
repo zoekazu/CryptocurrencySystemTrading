@@ -1,0 +1,11 @@
+# python cache
+__pychache__
+*.pyc
+
+# pytest cahce
+.pytest_cache
+
+# VS code dependencies
+.vscode
+bash.exe.stackdump
+
