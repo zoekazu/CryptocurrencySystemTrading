@@ -51,3 +51,30 @@ get_ticker:
       ltp: 31690.0
       volume: 16819.26
       volume_by_product: 6819.26
+
+get_executions:
+  - req:
+      product_code: BTC_JPY
+      before: 0
+      after: 0
+      count: 31
+    res:
+      - id: 39287
+        side: BUY
+        price: 31690.0
+        size: 27.04
+        exec_date: "2015-07-08T02:43:34.823"
+        buy_child_order_acceptance_id: "JRF20150707-200203-452209"
+        sell_child_order_acceptance_id: "JRF20150708-024334-060234"
+  - req:
+      product_code: BTC_JPY
+      before: 0
+      after: 0
+    res:
+      - id: 39287
+        side: BUY
+        price: 31690.0
+        size: 27.04
+        exec_date: "2015-07-08T02:43:34.823"
+        buy_child_order_acceptance_id: "JRF20150707-200203-452209"
+        sell_child_order_acceptance_id: "JRF20150708-024334-060234"

@@ -32,28 +32,39 @@ class TestPublicAPI():
 
     def test_get_board(self, pub_api, cases):
         cases = cases['get_board']
-        ck_dict_arch(pub_api.get_board, cases)
+        ck_res_arch(pub_api.get_board, cases)
 
     def test_get_ticker(self, pub_api, cases):
         cases = cases['get_ticker']
-        ck_dict_arch(pub_api.get_ticker, cases)
+        ck_res_arch(pub_api.get_ticker, cases)
+
+    def test_get_executions(self, pub_api, cases):
+        cases = cases['get_executions']
+        ck_res_arch(pub_api.get_executions, cases)
 
 
-def ck_dict_arch(api_func, cases):
+def ck_res_arch(api_func, cases):
     for case in cases:
         if 'req' in case.keys():
-            res = api_func(case['req'].values())
+            res = api_func(*case['req'].values())
         else:
             res = api_func()
 
+        case_res = case['res']
+
+        # if the respose is list, do representative value test
+        if isinstance(res, list):
+            res = res[0]
+            case_res = case_res[0]
+
         res_keys = res.keys()
-        assert res_keys == case['res'].keys()
+        assert res_keys == case_res.keys()
         for res_key in res_keys:
-            assert isinstance(res[res_key], type(case['res'][res_key]))
+            assert isinstance(res[res_key], type(case_res[res_key]))
 
             # if the value of dict is list
             if isinstance(res[res_key], list):
-                for res_ch, case_ch in zip(res[res_key], case['res'][res_key]):
+                for res_ch, case_ch in zip(res[res_key], case_res[res_key]):
                     assert isinstance(res_ch.values(), type(case_ch.values()))
 
 

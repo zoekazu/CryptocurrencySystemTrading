@@ -123,19 +123,19 @@ class PublicAPI(API):
                   "count": count,
                   "before": before,
                   "after": after}
-        return self._request(PUBREQ_PATH["executions"], params=params)
+        return self._request(PUBREQ_PATH["getexecutions"], params=params)
 
     def get_boardstate(self, product_code):
         params = {"product_code": product_code}
-        return self._request(PUBREQ_PATH["boardstate"], params=params)
+        return self._request(PUBREQ_PATH["getboardstate"], params=params)
 
     def get_health(self, product_code):
         params = {"product_code": product_code}
-        return self._request(PUBREQ_PATH["health"], params=params)
+        return self._request(PUBREQ_PATH["gethealth"], params=params)
 
     def get_chats(self, from_date=5):
         params = {"from_date": from_date}
-        return self._request(PUBREQ_PATH["chats"], params=params)
+        return self._request(PUBREQ_PATH["getchats"], params=params)
 
 
 class PrivateAPI(API):
