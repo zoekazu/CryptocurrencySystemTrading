@@ -1,0 +1,53 @@
+get_market:
+  - res:
+      product_code: BTC_JPY
+      market_type: Spot
+  - res:
+      product_code: ETH_JPY
+      market_type: Spot
+  - res:
+      product_code: BTCJPY{two_weeks_after_day}{two_weeks_after_month}{two_weeks_after_year}
+      alias: BTCJPY_MAT2WK
+      market_type: Futures
+
+get_board:
+  - req:
+      product_code: BTC_JPY
+    res:
+      mid_price: 33320.0
+      bids:
+        - price: 33000
+          size: 0.1
+      asks:
+        - price: 300000
+          size: 0.1
+  - req:
+      product_code: ETH_JPY
+    res:
+      mid_price: 33320.0
+      bids:
+        - price: 30000
+          size: 0.1
+      asks:
+        - price: 30000
+          size: 0.1
+
+get_ticker:
+  - req:
+      product_code: BTC_JPY
+    res:
+      product_code: BTC_JPY
+      state: RUNNING
+      timestamp: "2015-07-08T02:50:59.97"
+      tick_id: 3579
+      best_bid: 30000.0
+      best_ask: 36640.0
+      best_bid_size: 0.1
+      best_ask_size: 5.0
+      total_bid_depth: 15.13
+      total_ask_depth: 20.0
+      market_bid_size: 0.0
+      market_ask_size: 0.0
+      ltp: 31690.0
+      volume: 16819.26
+      volume_by_product: 6819.26

@@ -11,25 +11,52 @@ import yaml
 
 
 class TestPublicAPI():
-    def _init(self):
-        self.api = bitflyer.PublicAPI()
-        self.cases = self._read_cases()
 
-    def _read_cases(self):
-        with open(f'{os.path.dirname(__file__)}/assets/testcases_pubapi.yaml', 'r') as yml:
-            cases = yaml.load(yml, Loader=yaml.FullLoader)
-        return cases
+    def test_get_market(self, pub_api, cases):
+        cases = cases['get_market']
+        # ck_dict_arch(pub_api.get_market, cases)
 
-    def test_get_market(self):
-        self._init()
-        # two_weeks_after = date.today() + timedelta(days=13)
-        # two_weeks_after_day = two_weeks_after.day
-        # two_weeks_after_month = calendar.month_abbr(two_weeks_after.month).upper()
-        # two_weeks_after_day = two_weeks_after.year
+        two_weeks_after = date.today() + timedelta(days=12)
+        two_weeks_after_day = two_weeks_after.day
+        two_weeks_after_month = calendar.month_abbr[two_weeks_after.month].upper()
+        two_weeks_after_year = two_weeks_after.year
 
-        test_dicts = self.cases['get_market']
+        markets = pub_api.get_market()
 
-        markets = self.api.get_market()
+        for case in cases:
+            if '{' in case['res']['product_code']:
+                case['res']['product_code'] = case['res']['product_code'].format(two_weeks_after_day=two_weeks_after_day,
+                                                                                 two_weeks_after_month=two_weeks_after_month,
+                                                                                 two_weeks_after_year=two_weeks_after_year)
+            assert case['res'] in markets
 
-        for test_dict in test_dicts:
-            assert test_dict in markets
+    def test_get_board(self, pub_api, cases):
+        cases = cases['get_board']
+        ck_dict_arch(pub_api.get_board, cases)
+
+    def test_get_ticker(self, pub_api, cases):
+        cases = cases['get_ticker']
+        ck_dict_arch(pub_api.get_ticker, cases)
+
+
+def ck_dict_arch(api_func, cases):
+    for case in cases:
+        if 'req' in case.keys():
+            res = api_func(case['req'].values())
+        else:
+            res = api_func()
+
+        res_keys = res.keys()
+        assert res_keys == case['res'].keys()
+        for res_key in res_keys:
+            assert isinstance(res[res_key], type(case['res'][res_key]))
+
+            # if the value of dict is list
+            if isinstance(res[res_key], list):
+                for res_ch, case_ch in zip(res[res_key], case['res'][res_key]):
+                    assert isinstance(res_ch.values(), type(case_ch.values()))
+
+
+@pytest.fixture
+def pub_api():
+    yield bitflyer.PublicAPI()

@@ -17,7 +17,7 @@ COUNT_DEF = 100
 
 PUBREQ_PATH = {
     "getmarket": "/v1/getmarkets",
-    "board": "/v1/board",
+    "board": "/v1/getboard",
     "getticker": "/v1/getticker",
     "getexecutions": "/v1/getexecutions",
     "getboardstate": "/v1/getboardstate",
@@ -116,7 +116,7 @@ class PublicAPI(API):
 
     def get_ticker(self, product_code):
         params = {"product_code": product_code}
-        return self._request(PUBREQ_PATH["ticker"], params=params)
+        return self._request(PUBREQ_PATH["getticker"], params=params)
 
     def get_executions(self, product_code, before, after, count=COUNT_DEF):
         params = {"product_code": product_code,

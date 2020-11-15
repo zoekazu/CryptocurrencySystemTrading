@@ -1,8 +1,0 @@
-get_market:
-  - product_code: BTC_JPY
-    market_type: Spot
-  - product_code: ETH_JPY
-    market_type: Spot
-  # - product_code: BTCJPY<two_weeks_after_day><two_weeks_after_month><two_weeks_after_year>
-  #   alias: BTCJPY_MAT2WK
-  #   market_type: Futures
