@@ -2,12 +2,12 @@
 
 
 import calendar
-import os
 from datetime import date, timedelta
 
 import bitflyer
 import pytest
-import yaml
+
+from . import testmethod as testmt
 
 
 class TestPublicAPI():
@@ -21,63 +21,32 @@ class TestPublicAPI():
         two_weeks_after_month = calendar.month_abbr[two_weeks_after.month].upper()
         two_weeks_after_year = two_weeks_after.year
 
-        markets = pub_api.get_market()
-
         for case in cases:
             if '{' in case['res']['product_code']:
                 case['res']['product_code'] = case['res']['product_code'].format(two_weeks_after_day=two_weeks_after_day,
                                                                                  two_weeks_after_month=two_weeks_after_month,
                                                                                  two_weeks_after_year=two_weeks_after_year)
-            assert case['res'] in markets
+        testmt.ck_parts_match(pub_api.get_market, cases)
 
     def test_get_board(self, pub_api, cases):
-        ck_res_arch(pub_api.get_board, cases['get_board'])
+        testmt.ck_res_arch(pub_api.get_board, cases['get_board'])
 
     def test_get_ticker(self, pub_api, cases):
-        ck_res_arch(pub_api.get_ticker, cases['get_ticker'])
+        testmt.ck_res_arch(pub_api.get_ticker, cases['get_ticker'])
 
     def test_get_executions(self, pub_api, cases):
-        ck_res_arch(pub_api.get_executions, cases['get_executions'])
+        testmt.ck_res_arch(pub_api.get_executions, cases['get_executions'])
 
     def test_get_boardstate(self, pub_api, cases):
-        ck_res_arch(pub_api.get_boardstate, cases['get_boardstate'])
+        testmt.ck_res_arch(pub_api.get_boardstate, cases['get_boardstate'])
 
     def test_get_health(self, pub_api, cases):
-        ck_res_arch(pub_api.get_health, cases['get_health'])
+        testmt.ck_res_arch(pub_api.get_health, cases['get_health'])
 
     def test_get_chats(self, pub_api, cases):
-        ck_res_arch(pub_api.get_chats, cases['get_chats'])
+        testmt.ck_res_arch(pub_api.get_chats, cases['get_chats'])
 
 
-def ck_res_arch(api_func, cases):
-    for case in cases:
-        if 'req' in case.keys():
-            res = api_func(*case['req'].values())
-        else:
-            res = api_func()
-
-        case_res = case['res']
-
-        # if the respose is list, do representative value test
-        if isinstance(res, list):
-            res = res[0]
-            case_res = case_res[0]
-
-        res_keys = res.keys()
-        assert res_keys == case_res.keys()
-        for res_key in res_keys:
-            assert isinstance(res[res_key], type(case_res[res_key]))
-
-            # if the value of dict is list
-            if isinstance(res[res_key], list):
-                for res_ch, case_ch in zip(res[res_key], case_res[res_key]):
-                    assert isinstance(res_ch.values(), type(case_ch.values()))
-
-            # if the value of dict is dict
-            if isinstance(res[res_key], dict):
-                assert res[res_key].values() == case_res[res_key].values()
-
-
-@pytest.fixture
+@ pytest.fixture
 def pub_api():
     yield bitflyer.PublicAPI()
