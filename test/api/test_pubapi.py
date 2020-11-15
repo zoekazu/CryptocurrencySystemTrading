@@ -42,8 +42,11 @@ class TestPublicAPI():
     def test_get_boardstate(self, pub_api, cases):
         ck_res_arch(pub_api.get_boardstate, cases['get_boardstate'])
 
-    def get_health(self, pub_api, cases):
+    def test_get_health(self, pub_api, cases):
         ck_res_arch(pub_api.get_health, cases['get_health'])
+
+    def test_get_chats(self, pub_api, cases):
+        ck_res_arch(pub_api.get_chats, cases['get_chats'])
 
 
 def ck_res_arch(api_func, cases):
