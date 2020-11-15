@@ -31,20 +31,19 @@ class TestPublicAPI():
             assert case['res'] in markets
 
     def test_get_board(self, pub_api, cases):
-        cases = cases['get_board']
-        ck_res_arch(pub_api.get_board, cases)
+        ck_res_arch(pub_api.get_board, cases['get_board'])
 
     def test_get_ticker(self, pub_api, cases):
-        cases = cases['get_ticker']
-        ck_res_arch(pub_api.get_ticker, cases)
+        ck_res_arch(pub_api.get_ticker, cases['get_ticker'])
 
     def test_get_executions(self, pub_api, cases):
-        cases = cases['get_executions']
-        ck_res_arch(pub_api.get_executions, cases)
+        ck_res_arch(pub_api.get_executions, cases['get_executions'])
 
     def test_get_boardstate(self, pub_api, cases):
-        cases = cases['get_boardstate']
-        ck_res_arch(pub_api.get_boardstate, cases)
+        ck_res_arch(pub_api.get_boardstate, cases['get_boardstate'])
+
+    def get_health(self, pub_api, cases):
+        ck_res_arch(pub_api.get_health, cases['get_health'])
 
 
 def ck_res_arch(api_func, cases):

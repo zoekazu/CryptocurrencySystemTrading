@@ -85,3 +85,9 @@ get_boardstate:
     res:
       health: NORMAL
       state: MATURED
+
+get_health:
+  - req:
+      product_code: BTC_JPY
+    res:
+      status: NORMAL
