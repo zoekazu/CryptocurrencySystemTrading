@@ -78,3 +78,10 @@ get_executions:
         exec_date: "2015-07-08T02:43:34.823"
         buy_child_order_acceptance_id: "JRF20150707-200203-452209"
         sell_child_order_acceptance_id: "JRF20150708-024334-060234"
+
+get_boardstate:
+  - req:
+      product_code: BTC_JPY
+    res:
+      health: NORMAL
+      state: MATURED

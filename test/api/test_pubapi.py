@@ -14,7 +14,7 @@ class TestPublicAPI():
 
     def test_get_market(self, pub_api, cases):
         cases = cases['get_market']
-        # ck_dict_arch(pub_api.get_market, cases)
+        # ck_res_arch(pub_api.get_market, cases)
 
         two_weeks_after = date.today() + timedelta(days=12)
         two_weeks_after_day = two_weeks_after.day
@@ -42,6 +42,10 @@ class TestPublicAPI():
         cases = cases['get_executions']
         ck_res_arch(pub_api.get_executions, cases)
 
+    def test_get_boardstate(self, pub_api, cases):
+        cases = cases['get_boardstate']
+        ck_res_arch(pub_api.get_boardstate, cases)
+
 
 def ck_res_arch(api_func, cases):
     for case in cases:
@@ -66,6 +70,10 @@ def ck_res_arch(api_func, cases):
             if isinstance(res[res_key], list):
                 for res_ch, case_ch in zip(res[res_key], case_res[res_key]):
                     assert isinstance(res_ch.values(), type(case_ch.values()))
+
+            # if the value of dict is dict
+            if isinstance(res[res_key], dict):
+                assert res[res_key].values() == case_res[res_key].values()
 
 
 @pytest.fixture
