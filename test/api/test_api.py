@@ -56,6 +56,13 @@ class TestPublicAPI():
 
 
 class TestPrivateAPI():
+
+    def test_get_key(self, pvt_api):
+        assert pvt_api._get_key() is not None
+
+    def test_get_secret(self, pvt_api):
+        assert pvt_api._get_secret(pvt_api._get_key()) is not None
+
     @pytest.mark.parametrize('case', cases['get_permissions'])
     def test_get_permissions(self, pvt_api, case):
         testmt.ck_perfect_match(pvt_api.get_permissions, case)
@@ -64,6 +71,10 @@ class TestPrivateAPI():
     @pytest.mark.parametrize('case', cases['forbidden_permissions'])
     def test_get_permissions_forbidden(self, pvt_api, case):
         testmt.ck_part_match(pvt_api.get_permissions, case)
+
+    @pytest.mark.parametrize('case', cases['get_balance'])
+    def test_get_balance(self, pvt_api, case):
+        testmt.ck_res_arch(pvt_api.get_balance, case)
 
 
 @pytest.fixture

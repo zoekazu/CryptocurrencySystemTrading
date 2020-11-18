@@ -151,3 +151,15 @@ get_permissions:
 forbidden_permissions:
   - res:
       - /v1/me/withdraw
+
+get_balance:
+  - res:
+      - currency_code: JPY
+        amount: 102407.0
+        available: 5080.0
+      - currency_code: BTC
+        amount: 10.2
+        available: 4.0
+      - currency_code: ETH
+        amount: 20.4
+        available: 16.0
