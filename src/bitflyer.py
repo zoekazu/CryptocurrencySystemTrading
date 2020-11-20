@@ -29,7 +29,7 @@ PRIREQ_PATH_METHOD = {
     "getpermissions": ["/v1/me/getpermissions", "GET"],
     "getbalance": ["/v1/me/getbalance", "GET"],
     "getcollateral": ["/v1/me/getcollateral", "GET"],
-    "collateralaccounts": ["/v1/me/getcollateralaccounts", "GET"],
+    "getcollateralaccounts": ["/v1/me/getcollateralaccounts", "GET"],
     "getaddresses": ["/v1/me/getaddresses", "GET"],
     "getcoinins": ["/v1/me/getcoinins", "GET"],
     "getcoinouts": ["/v1/me/getcoinouts", "GET"],

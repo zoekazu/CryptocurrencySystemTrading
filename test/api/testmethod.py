@@ -25,6 +25,7 @@ def ck_res_arch(api_func, case):
         res = api_func(*case['req'].values())
     else:
         res = api_func()
+    assert res
 
     case_res = case['res']
 
