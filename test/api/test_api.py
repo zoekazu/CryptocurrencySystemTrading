@@ -2,17 +2,17 @@
 
 
 import calendar
+import json
 import os
 from datetime import date, timedelta
 
 import bitflyer
 import pytest
-import yaml
 
 from . import testmethod as testmt
 
-with open(f'{os.path.dirname(__file__)}/assets/testcases_api.yaml', 'r') as yml:
-    cases = yaml.load(yml, Loader=yaml.FullLoader)
+with open(f'{os.path.dirname(__file__)}/assets/testcases_api.json', 'r') as f:
+    cases = json.load(f)
 
 
 class TestPublicAPI():
