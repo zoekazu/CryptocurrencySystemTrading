@@ -11,7 +11,7 @@ import pytest
 
 from . import testmethod as testmt
 
-with open(f'{os.path.dirname(__file__)}/assets/testcases_api.json', 'r') as f:
+with open(f'{os.path.dirname(__file__)}/assets/testcases_api.json', 'r', encoding="utf-8") as f:
     cases = json.load(f)
 
 
@@ -98,6 +98,10 @@ class TestPrivateAPI():
     @pytest.mark.parametrize('case', cases['get_coinouts'])
     def test_get_coinouts(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_coinouts, case)
+
+    @pytest.mark.parametrize('case', cases['get_bankaccounts'])
+    def test_get_bankaccounts(self, pvt_api, case):
+        testmt.ck_res_arch(pvt_api.get_bankaccounts, case)
 
 
 @pytest.fixture
