@@ -369,13 +369,48 @@
     {
       "res": [
         {
-          "id": 3402, 
+          "id": 3402,
           "is_verified": true,
           "bank_name": "三井住友銀行",
           "branch_name": "アオイ支店",
           "account_type": "普通",
           "account_number": "1111111",
           "account_name": "ビットフライヤータロウ"
+        }
+      ]
+    }
+  ],
+  "get_deposits": [
+    {
+      "req": {
+        "before": 0,
+        "after": 0,
+        "count": 31
+      },
+      "res": [
+        {
+          "id": 300,
+          "order_id": "MDP20151014-101010-033333",
+          "currency_code": "JPY",
+          "amount": 10000.0,
+          "status": "COMPLETED",
+          "event_date": "2015-10-14T10:10:10.001"
+        }
+      ]
+    },
+    {
+      "req": {
+        "before": 0,
+        "after": 0
+      },
+      "res": [
+        {
+          "id": 300,
+          "order_id": "MDP20151014-101010-033333",
+          "currency_code": "JPY",
+          "amount": 10000.0,
+          "status": "COMPLETED",
+          "event_date": "2015-10-14T10:10:10.001"
         }
       ]
     }

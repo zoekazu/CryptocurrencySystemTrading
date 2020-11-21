@@ -103,6 +103,10 @@ class TestPrivateAPI():
     def test_get_bankaccounts(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_bankaccounts, case)
 
+    @pytest.mark.parametrize('case', cases['get_deposits'])
+    def test_get_deposits(self, pvt_api, case):
+        testmt.ck_res_arch(pvt_api.get_deposits, case)
+
 
 @pytest.fixture
 def pvt_api():

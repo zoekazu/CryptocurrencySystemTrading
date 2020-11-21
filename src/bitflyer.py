@@ -258,7 +258,7 @@ class PrivateAPI(API):
     def get_bankaccounts(self):
         return self._request(*PRIREQ_PATH_METHOD["getbankaccounts"])
 
-    def get_deposits(self):
+    def get_deposits(self, before, after, count=COUNT_DEF):
         return self._request(*PRIREQ_PATH_METHOD["getdeposits"])
 
     def withdraw(self, currency_mode, bank_account_id, amount, code=None):
