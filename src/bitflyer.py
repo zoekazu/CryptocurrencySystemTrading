@@ -6,6 +6,7 @@ import hmac
 import json
 import time
 import urllib
+from collections import namedtuple
 
 import keyring
 import requests
@@ -65,13 +66,11 @@ class HTTPStatusError(Exception):
     pass
 
 
-class SendParams():
-    def __init__(self, product_code, child_order_type, side, price, size):
-        self.product_code = product_code
-        self.child_order_type = child_order_type
-        self.side = side
-        self.price = price
-        self.size = size
+SendParams = namedtuple('SendParams', ('product_code',
+                                       'child_order_type',
+                                       'side',
+                                       'price',
+                                       'size'))
 
 
 class API(metaclass=abc.ABCMeta):
@@ -200,9 +199,12 @@ class PrivateAPI(API):
         if res.status_code == requests.codes.ok:
             return json.loads(res.content.decode("utf-8"))
         else:
-            raise HTTPStatusError('You accessed ' + url
-                                  + ' but got a ' + str(res.status_code)
-                                  + ' HTTP status code error')
+            raise HTTPStatusError('HTTP status ' +
+                                  str(res.status_code) +
+                                  ', :' +
+                                  str(res.text) +
+                                  ', URL: ' +
+                                  str(res.url))
 
     def get_permissions(self):
         return self._request(*PRIREQ_PATH_METHOD["getpermissions"])
@@ -276,15 +278,29 @@ class PrivateAPI(API):
                   "message_id": message_id}
         return self._request(*PRIREQ_PATH_METHOD["getwithdrawals"], params=params)
 
-    def send_childorder(self, minute_to_expire, time_in_force, inst: SendParams):
-        params = {"product_code": inst.product_code,
-                  "child_order_type": inst.child_order_type,
-                  "side": inst.side,
-                  "price": inst.price,
-                  "size": inst.size,
-                  "minute_to_expire": minute_to_expire,
-                  "time_in_force": time_in_force}
+    def send_childorder(self, product_code, child_order_type, side, size, price=None, minute_to_expire=43200, time_in_force="GTC"):
+        """
+        BTC_JPY: 0.001
+        RTH_JPY: 0.01
+        """
+        if child_order_type == "LIMIT":
+            if not price:
+                raise ValueError
+            params = {"product_code": product_code,
+                      "child_order_type": child_order_type,
+                      "side": side,
+                      "price": price,
+                      "size": size,
+                      "minute_to_expire": minute_to_expire,
+                      "time_in_force": time_in_force}
 
+        else:  # child_order_type == "MARKET"
+            params = {"product_code": product_code,
+                      "child_order_type": child_order_type,
+                      "side": side,
+                      "size": size,
+                      "minute_to_expire": minute_to_expire,
+                      "time_in_force": time_in_force}
         return self._request(*PRIREQ_PATH_METHOD["sendchildorder"], params=params)
 
     def cancel_childorder(self, product_code, child_order_id, child_order_acceptance_id):
@@ -293,11 +309,11 @@ class PrivateAPI(API):
                   "child_order_acceptance_id": child_order_acceptance_id}
         return self._request(*PRIREQ_PATH_METHOD["cancelchildorder"], params=params)
 
-    def send_parentorder(self, order_method, minute_to_expire, time_in_force, *insts):
+    def send_parentorder(self, order_method, minute_to_expire, time_in_force, *send_param):
         params = {"order_method": order_method,
                   "minute_to_expire": minute_to_expire,
                   "time_in_force": time_in_force,
-                  "parameters": insts}
+                  "parameters": send_param}
         return self._request(*PRIREQ_PATH_METHOD["sendparentorder"], params=params)
 
     def cancel_allchildorders(self, product_code):

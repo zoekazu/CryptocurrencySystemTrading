@@ -478,5 +478,31 @@
         }
       ]
     }
+  ],
+  "send_childorder": [
+    {
+      "req": {
+        "product_code": "ETH_JPY",
+        "child_order_type": "MARKET",
+        "side": "BUY",
+        "size": 0.01,
+        "minute_to_expire": 10000.0,
+        "time_in_force": "GTC"
+      },
+      "res": {
+        "child_order_acceptance_id": "JRF20150707-050237-639234"
+      }
+    },
+    {
+      "req": {
+        "product_code": "ETH_JPY",
+        "child_order_type": "MARKET",
+        "side": "SELL",
+        "size": 0.01
+      },
+      "res": {
+        "child_order_acceptance_id": "JRF20150707-050237-639234"
+      }
+    }
   ]
 }

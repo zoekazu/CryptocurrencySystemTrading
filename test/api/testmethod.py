@@ -8,10 +8,6 @@ def ck_perfect_match(api_func, case):
     assert res == case['res']
 
 
-def ck_parts_match(api_func, case):
-    ck_part_match(api_func, case)
-
-
 def ck_part_match(api_func, case):
     if 'req' in case.keys():
         res = api_func(*case['req'].values())
@@ -22,14 +18,14 @@ def ck_part_match(api_func, case):
 
 def ck_res_arch(api_func, case):
     if 'req' in case.keys():
-        res = api_func(*case['req'].values())
+        res = api_func(**case['req'])
     else:
         res = api_func()
     assert res
 
     case_res = case['res']
 
-    # if the respose is list, do representative value test
+    # if the respose is list, test representative values
     if isinstance(res, list):
         res = res[0]
         case_res = case_res[0]

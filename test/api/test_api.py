@@ -29,7 +29,7 @@ class TestPublicAPI():
             case['res']['product_code'] = case['res']['product_code'].format(two_weeks_after_day=two_weeks_after_day,
                                                                              two_weeks_after_month=two_weeks_after_month,
                                                                              two_weeks_after_year=two_weeks_after_year)
-        testmt.ck_parts_match(pub_api.get_market, case)
+        testmt.ck_part_match(pub_api.get_market, case)
 
     @pytest.mark.parametrize('case', cases['get_board'])
     def test_get_board(self, pub_api, case):
@@ -122,8 +122,13 @@ class TestPrivateAPI():
     def test_get_withdrawals(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_withdrawals, case)
 
+    @pytest.mark.skip(reason="Stop transactions")
+    @pytest.mark.parametrize('case', cases['send_childorder'])
+    def test_send_childorder(self, pvt_api, case):
+        testmt.ck_res_arch(pvt_api.send_childorder, case)
 
-@pytest.fixture
+
+@ pytest.fixture
 def pvt_api():
     yield bitflyer.PrivateAPI()
 
