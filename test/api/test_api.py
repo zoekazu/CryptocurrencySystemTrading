@@ -95,6 +95,11 @@ class TestPrivateAPI():
     def test_get_coinins(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_coinins, case)
 
+    @pytest.mark.parametrize('case', cases['get_coinouts'])
+    def test_get_coinouts(self, pvt_api, case):
+        testmt.ck_res_arch(pvt_api.get_coinouts, case)
+
+
 @pytest.fixture
 def pvt_api():
     yield bitflyer.PrivateAPI()
