@@ -107,17 +107,17 @@ class TestPrivateAPI():
     def test_get_deposits(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_deposits, case)
 
-    @pytest.mark.skip(reason="Unimplemented API")
+    @pytest.mark.xfail(reason="Unauthorized API")
     @pytest.mark.parametrize('case', cases['withdraw'])
     def test_withdraw(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.withraw, case)
 
-    @pytest.mark.skip(reason="Unimplemented API")
+    @pytest.mark.xfail(reason="Unauthorized API")
     @pytest.mark.parametrize('case', cases['withdraw_err'])
     def test_withdraw_err(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.withdraw, case)
 
-    @pytest.mark.xfail
+    @pytest.mark.xfail(reason="Unauthorized API")
     @pytest.mark.parametrize('case', cases['get_withdrawals'])
     def test_get_withdrawals(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_withdrawals, case)
