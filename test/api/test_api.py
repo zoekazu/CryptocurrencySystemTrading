@@ -8,6 +8,7 @@ from datetime import date, timedelta
 
 import bitflyer
 import pytest
+import requests
 
 from . import testmethod as testmt
 
@@ -126,6 +127,13 @@ class TestPrivateAPI():
     @pytest.mark.parametrize('case', cases['send_childorder'])
     def test_send_childorder(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.send_childorder, case)
+
+    @pytest.mark.parametrize('case', cases['cancel_childorder'])
+    def test_cancel_childorder(self, pvt_api, case):
+        # This test case also tests send_childorder()
+        order_id = pvt_api.send_childorder(**case['req'])
+        assert requests.codes.ok == pvt_api.cancel_childorder(product_code="ETH_JPY",
+                                                              child_order_acceptance_id=order_id['child_order_acceptance_id'])
 
 
 @ pytest.fixture

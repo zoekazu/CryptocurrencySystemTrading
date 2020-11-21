@@ -197,7 +197,10 @@ class PrivateAPI(API):
             raise err
 
         if res.status_code == requests.codes.ok:
-            return json.loads(res.content.decode("utf-8"))
+            if res.content:
+                return json.loads(res.content.decode("utf-8"))
+            else:
+                return res.status_code
         else:
             raise HTTPStatusError('HTTP status ' +
                                   str(res.status_code) +
@@ -303,10 +306,18 @@ class PrivateAPI(API):
                       "time_in_force": time_in_force}
         return self._request(*PRIREQ_PATH_METHOD["sendchildorder"], params=params)
 
-    def cancel_childorder(self, product_code, child_order_id, child_order_acceptance_id):
-        params = {"product_code": product_code,
-                  "child_order_id": child_order_id,
-                  "child_order_acceptance_id": child_order_acceptance_id}
+    def cancel_childorder(self, product_code, child_order_id=None, child_order_acceptance_id=None):
+        if child_order_id and child_order_acceptance_id:
+            raise ValueError
+        elif child_order_id:
+            params = {"product_code": product_code,
+                      "child_order_id": child_order_id}
+        elif child_order_acceptance_id:
+            params = {"product_code": product_code,
+                      "child_order_acceptance_id": child_order_acceptance_id}
+        else:
+            raise ValueError
+
         return self._request(*PRIREQ_PATH_METHOD["cancelchildorder"], params=params)
 
     def send_parentorder(self, order_method, minute_to_expire, time_in_force, *send_param):
