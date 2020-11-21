@@ -90,6 +90,10 @@ class TestPrivateAPI():
     def test_get_addresses(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_addresses, case)
 
+    @pytest.mark.skip(reason="Unimplemented function")
+    @pytest.mark.parametrize('case', cases['get_coinins'])
+    def test_get_coinins(self, pvt_api, case):
+        testmt.ck_res_arch(pvt_api.get_coinins, case)
 
 @pytest.fixture
 def pvt_api():
