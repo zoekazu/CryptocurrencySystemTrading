@@ -86,6 +86,10 @@ class TestPrivateAPI():
     def test_get_collateralaccounts(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_collateralaccounts, case)
 
+    @pytest.mark.parametrize('case', cases['get_addresses'])
+    def test_get_addresses(self, pvt_api, case):
+        testmt.ck_res_arch(pvt_api.get_addresses, case)
+
 
 @pytest.fixture
 def pvt_api():
