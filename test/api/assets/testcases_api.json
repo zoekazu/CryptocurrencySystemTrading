@@ -414,5 +414,33 @@
         }
       ]
     }
+  ],
+  "withdraw": [
+    {
+      "req": {
+        "currency_code": "JPY",
+        "bank_account_id": 1234,
+        "amount": 12000,
+        "code": "012345"
+      },
+      "res": {
+        "message_id": "69476620-5056-4003-bcbe-42658a2b041b"
+      }
+    }
+  ],
+  "withdraw_err": [
+    {
+      "req": {
+        "currency_code": "JPY",
+        "bank_account_id": 1234,
+        "amount": 12000,
+        "code": "012345"
+      },
+      "res": {
+        "status": -700,
+        "error_message": "This account has not yet been authenticated",
+        "data": null
+      }
+    }
   ]
 }
