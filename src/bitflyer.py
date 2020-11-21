@@ -269,7 +269,7 @@ class PrivateAPI(API):
             params["code"] = code
         return self._request(*PRIREQ_PATH_METHOD["withdraw"])
 
-    def get_withdrawals(self, before, after, message_id, count=COUNT_DEF):
+    def get_withdrawals(self, before, after, count=COUNT_DEF, message_id=None):
         params = {"count": count,
                   "before": before,
                   "after": after,

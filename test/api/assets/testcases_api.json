@@ -218,7 +218,8 @@
   "forbidden_permissions": [
     {
       "res": [
-        "/v1/me/withdraw"
+        "/v1/me/withdraw",
+        "/v1/me/getwithdrawals"
       ]
     }
   ],
@@ -441,6 +442,41 @@
         "error_message": "This account has not yet been authenticated",
         "data": null
       }
+    }
+  ],
+  "get_withdrawals": [
+    {
+      "req": {
+        "before": 0,
+        "after": 0,
+        "count": 31
+      },
+      "res": [
+        {
+          "id": 700,
+          "order_id": "MWD20151020-090909-011111",
+          "currency_code": "JPY",
+          "amount": 12000.0,
+          "status": "COMPLETED",
+          "event_date": "2015-10-20T09:09:09.416"
+        }
+      ]
+    },
+    {
+      "req": {
+        "before": 0,
+        "after": 0
+      },
+      "res": [
+        {
+          "id": 700,
+          "order_id": "MWD20151020-090909-011111",
+          "currency_code": "JPY",
+          "amount": 12000.0,
+          "status": "COMPLETED",
+          "event_date": "2015-10-20T09:09:09.416"
+        }
+      ]
     }
   ]
 }
