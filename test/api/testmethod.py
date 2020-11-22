@@ -1,3 +1,6 @@
+import requests
+
+# All function need to implement "assert"
 
 
 def ck_perfect_match(api_func, case):
@@ -6,6 +9,10 @@ def ck_perfect_match(api_func, case):
     else:
         res = api_func()
     assert res == case['res']
+
+
+def ck_res_status(res_status):
+    assert requests.codes.ok == res_status
 
 
 def ck_part_match(api_func, case):

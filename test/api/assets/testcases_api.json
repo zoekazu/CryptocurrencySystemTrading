@@ -608,5 +608,37 @@
         "parent_order_acceptance_id": "JRF20150707-050237-639234"
       }
     }
+  ],
+  "cancel_allchildorders": [
+    [
+      {
+        "req": {
+          "product_code": "ETH_JPY",
+          "child_order_type": "LIMIT",
+          "side": "BUY",
+          "size": 0.01,
+          "price": 40000,
+          "minute_to_expire": 10000.0,
+          "time_in_force": "GTC"
+        },
+        "res": {
+          "child_order_acceptance_id": "JRF20150707-050237-639234"
+        }
+      },
+      {
+        "req": {
+          "product_code": "ETH_JPY",
+          "child_order_type": "LIMIT",
+          "side": "BUY",
+          "size": 0.01,
+          "price": 40000,
+          "minute_to_expire": 10000.0,
+          "time_in_force": "GTC"
+        },
+        "res": {
+          "child_order_acceptance_id": "JRF20150707-050237-639234"
+        }
+      }
+    ]
   ]
 }

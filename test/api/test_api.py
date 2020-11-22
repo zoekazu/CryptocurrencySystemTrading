@@ -132,8 +132,9 @@ class TestPrivateAPI():
     def test_cancel_childorder(self, pvt_api, case):
         # This test case also tests send_childorder()
         order_id = pvt_api.send_childorder(**case['req'])
-        assert requests.codes.ok == pvt_api.cancel_childorder(product_code=case['req']['product_code'],
-                                                              child_order_acceptance_id=order_id['child_order_acceptance_id'])
+        res_status = pvt_api.cancel_childorder(product_code=case['req']['product_code'],
+                                               child_order_acceptance_id=order_id['child_order_acceptance_id'])
+        testmt.ck_res_status(res_status)
 
     @pytest.mark.parametrize('case', cases['send_ifd'])
     def test_send_ifd(self, pvt_api, case):
@@ -155,6 +156,13 @@ class TestPrivateAPI():
 
     def dict2orderparams_incase(self, case):
         return [bitflyer.OrderParams(**param) for param in case["req"]["parameters"]]
+
+    @pytest.mark.parametrize('cases', cases['cancel_allchildorders'])
+    def test_cancel_allchildorders(self, pvt_api, cases):
+        for case in cases:
+            pvt_api.send_childorder(**case['req'])
+        res_status = pvt_api.cancel_allchildorders(product_code=case['req']['product_code'])
+        testmt.ck_res_status(res_status)
 
 
 @ pytest.fixture
