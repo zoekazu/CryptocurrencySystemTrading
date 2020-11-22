@@ -383,12 +383,14 @@ class PrivateAPI(API):
     def get_parentorders(self, product_code, before=None, after=None, count=COUNT_DEF,
                          parent_order_state=None):
         params = {"product_code": product_code,
-                  "count": count,
-                  "parent_order_state": parent_order_state}
+                  "count": count}
         if before:
             params["before"] = before
         if after:
             params["after"] = after
+        if parent_order_state:
+            params["parent_order_state"] = parent_order_state
+
         return self._request(*PRIREQ_PATH_METHOD["getparentorders"], params=params)
 
     def get_parentorder(self, parent_order_id=None, parent_order_acceptance_id=None):

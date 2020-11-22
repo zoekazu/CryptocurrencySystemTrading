@@ -181,6 +181,10 @@ class TestPrivateAPI():
     def test_get_childorders(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_childorders, case)
 
+    @pytest.mark.parametrize('case', cases['get_parentorders'])
+    def test_get_parentorders(self, pvt_api, case):
+        testmt.ck_res_arch(pvt_api.get_parentorders, case)
+
 
 @ pytest.fixture
 def pvt_api():
