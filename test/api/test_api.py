@@ -123,7 +123,7 @@ class TestPrivateAPI():
     def test_get_withdrawals(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.get_withdrawals, case)
 
-    @pytest.mark.skip(reason="Stop transactions")
+    @pytest.mark.skip(reason="Do not run transactions")
     @pytest.mark.parametrize('case', cases['send_childorder'])
     def test_send_childorder(self, pvt_api, case):
         testmt.ck_res_arch(pvt_api.send_childorder, case)
@@ -136,26 +136,39 @@ class TestPrivateAPI():
                                                child_order_acceptance_id=order_id['child_order_acceptance_id'])
         testmt.ck_res_status(res_status)
 
+    def dict2orderparams_incase(self, case):
+        return [bitflyer.OrderParams(**param) for param in case["req"]["parameters"]]
+
+    @pytest.mark.skip(reason="Do not run transactions")
     @pytest.mark.parametrize('case', cases['send_ifd'])
     def test_send_ifd(self, pvt_api, case):
         order_params = self.dict2orderparams_incase(case)
         del case['req']['parameters']
-        order_id = pvt_api.send_ifd(*order_params, **case['req'])
+        _ = pvt_api.send_ifd(*order_params, **case['req'])
 
+    @pytest.mark.skip(reason="Do not run transactions")
     @pytest.mark.parametrize('case', cases['send_oco'])
     def test_send_oco(self, pvt_api, case):
         order_params = self.dict2orderparams_incase(case)
         del case['req']['parameters']
-        order_id = pvt_api.send_oco(*order_params, **case['req'])
+        _ = pvt_api.send_oco(*order_params, **case['req'])
 
+    @pytest.mark.skip(reason="Do not run transactions")
     @pytest.mark.parametrize('case', cases['send_ifdoco'])
     def test_send_ifdoco(self, pvt_api, case):
         order_params = self.dict2orderparams_incase(case)
         del case['req']['parameters']
-        order_id = pvt_api.send_ifdoco(*order_params, **case['req'])
+        _ = pvt_api.send_ifdoco(*order_params, **case['req'])
 
-    def dict2orderparams_incase(self, case):
-        return [bitflyer.OrderParams(**param) for param in case["req"]["parameters"]]
+    @pytest.mark.parametrize('case', cases['send_ifdoco'])
+    def test_cancel_parentorder(self, pvt_api, case):
+        order_params = self.dict2orderparams_incase(case)
+        product_code = case['req']['parameters'][0]['product_code']
+        del case['req']['parameters']
+        order_id = pvt_api.send_ifdoco(*order_params, **case['req'])
+        res_status = pvt_api.cancel_parentorder(product_code=product_code,
+                                                parent_order_acceptance_id=order_id['parent_order_acceptance_id'])
+        testmt.ck_res_status(res_status)
 
     @pytest.mark.parametrize('cases', cases['cancel_allchildorders'])
     def test_cancel_allchildorders(self, pvt_api, cases):

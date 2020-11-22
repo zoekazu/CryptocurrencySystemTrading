@@ -350,6 +350,20 @@ class PrivateAPI(API):
                   "parameters": send_param}
         return self._request(*PRIREQ_PATH_METHOD["sendparentorder"], params=params)
 
+    def cancel_parentorder(self, product_code, parent_order_id=None, parent_order_acceptance_id=None):
+        if parent_order_id and parent_order_acceptance_id:
+            raise ValueError
+        elif parent_order_id:
+            params = {"product_code": product_code,
+                      "parent_order_id": parent_order_id}
+        elif parent_order_acceptance_id:
+            params = {"product_code": product_code,
+                      "parent_order_acceptance_id": parent_order_acceptance_id}
+        else:
+            raise ValueError
+
+        return self._request(*PRIREQ_PATH_METHOD["cancelparentorder"], params=params)
+
     def cancel_allchildorders(self, product_code):
         params = {"product_code": product_code}
         return self._request(*PRIREQ_PATH_METHOD["cancelallchildorders"], params=params)
@@ -428,15 +442,15 @@ class PrivateAPIWapper(PrivateAPI):
 
     def send_ifd(self, params_1: OrderParams, params_2: OrderParams, minute_to_expire=43200, time_in_force="GTC"):
         params = [params_1.dump_dict(), params_2.dump_dict()]
-        self._send_parentorder("IFD", params, minute_to_expire=43200, time_in_force="GTC")
+        return self._send_parentorder("IFD", params, minute_to_expire=43200, time_in_force="GTC")
 
     def send_oco(self, params_1: OrderParams, params_2: OrderParams, minute_to_expire=43200, time_in_force="GTC"):
         params = [params_1.dump_dict(), params_2.dump_dict()]
-        self._send_parentorder("OCO", params, minute_to_expire=43200, time_in_force="GTC")
+        return self._send_parentorder("OCO", params, minute_to_expire=43200, time_in_force="GTC")
 
     def send_ifdoco(self, params_1: OrderParams, params_2: OrderParams, params_3: OrderParams, minute_to_expire=43200, time_in_force="GTC"):
         params = [params_1.dump_dict(), params_2.dump_dict(), params_3.dump_dict()]
-        self._send_parentorder("IFDOCO", params, minute_to_expire=43200, time_in_force="GTC")
+        return self._send_parentorder("IFDOCO", params, minute_to_expire=43200, time_in_force="GTC")
 
 
 class PublicAPITest:
