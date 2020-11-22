@@ -237,33 +237,9 @@ class PrivateAPI(API):
         return self._request(*PRIREQ_PATH_METHOD["getbalance"])
 
     def get_collateral(self):
-        """get the status of deposit
-
-        Returns:
-            dict:   {
-                    "collateral": 100000,
-                    "open_position_pnl": -715,
-                    "require_collateral": 19857,
-                    "keep_rate": 5.000
-                    }
-        """
         return self._request(*PRIREQ_PATH_METHOD["getcollateral"])
 
     def get_collateralaccounts(self):
-        """get the status of deposit for each currency
-
-        Returns:
-            dict:   {
-                        {
-                            "currency_code": "JPY",
-                            "amount": 10000
-                        },
-                        {
-                            "currency_code": "BTC",
-                            "amount": 1.23
-                        }
-                    }
-        """
         return self._request(*PRIREQ_PATH_METHOD["getcollateralaccounts"])
 
     def get_addresses(self):
@@ -298,44 +274,41 @@ class PrivateAPI(API):
     def get_withdrawals(self, before, after, count=COUNT_DEF, message_id=None):
         params = {"count": count,
                   "before": before,
-                  "after": after,
-                  "message_id": message_id}
+                  "after": after}
+        if message_id:
+            params["message_id"] = message_id
         return self._request(*PRIREQ_PATH_METHOD["getwithdrawals"], params=params)
 
     def send_childorder(self, product_code, child_order_type, side, size, price=None, minute_to_expire=43200, time_in_force="GTC"):
-        """
-        BTC_JPY: 0.001
-        RTH_JPY: 0.01
-        """
+        if product_code == "BTC_JPY":
+            if size < 0.001:
+                raise ValueError('Minimum bet is 0.001')
+        else:  # product_code == "ETH_JPY"
+            if size < 0.01:
+                raise ValueError('Minimum bet is 0.01')
+
+        params = {"product_code": product_code,
+                  "child_order_type": child_order_type,
+                  "side": side,
+                  "size": size,
+                  "minute_to_expire": minute_to_expire,
+                  "time_in_force": time_in_force}
+
         if child_order_type == "LIMIT":
             if not price:
                 raise ValueError
-            params = {"product_code": product_code,
-                      "child_order_type": child_order_type,
-                      "side": side,
-                      "price": price,
-                      "size": size,
-                      "minute_to_expire": minute_to_expire,
-                      "time_in_force": time_in_force}
+            params["price"] = price
 
-        else:  # child_order_type == "MARKET"
-            params = {"product_code": product_code,
-                      "child_order_type": child_order_type,
-                      "side": side,
-                      "size": size,
-                      "minute_to_expire": minute_to_expire,
-                      "time_in_force": time_in_force}
         return self._request(*PRIREQ_PATH_METHOD["sendchildorder"], params=params)
 
     def cancel_childorder(self, product_code, child_order_id=None, child_order_acceptance_id=None):
+        params = {"product_code": product_code}
         if child_order_id and child_order_acceptance_id:
             raise ValueError
         elif child_order_id:
-            params = {"product_code": product_code,
-                      "child_order_id": child_order_id}
+            params["child_order_id"] = child_order_id
         elif child_order_acceptance_id:
-            params = {"product_code": product_code,
-                      "child_order_acceptance_id": child_order_acceptance_id}
+            params["child_order_acceptance_id"] = child_order_acceptance_id
         else:
             raise ValueError
 
@@ -351,14 +324,13 @@ class PrivateAPI(API):
         return self._request(*PRIREQ_PATH_METHOD["sendparentorder"], params=params)
 
     def cancel_parentorder(self, product_code, parent_order_id=None, parent_order_acceptance_id=None):
+        params = {"product_code": product_code}
         if parent_order_id and parent_order_acceptance_id:
             raise ValueError
         elif parent_order_id:
-            params = {"product_code": product_code,
-                      "parent_order_id": parent_order_id}
+            params["parent_order_id"] = parent_order_id
         elif parent_order_acceptance_id:
-            params = {"product_code": product_code,
-                      "parent_order_acceptance_id": parent_order_acceptance_id}
+            params["parent_order_acceptance_id"] = parent_order_acceptance_id
         else:
             raise ValueError
 
