@@ -132,13 +132,34 @@ class TestPrivateAPI():
     def test_cancel_childorder(self, pvt_api, case):
         # This test case also tests send_childorder()
         order_id = pvt_api.send_childorder(**case['req'])
-        assert requests.codes.ok == pvt_api.cancel_childorder(product_code="ETH_JPY",
+        assert requests.codes.ok == pvt_api.cancel_childorder(product_code=case['req']['product_code'],
                                                               child_order_acceptance_id=order_id['child_order_acceptance_id'])
+
+    @pytest.mark.parametrize('case', cases['send_ifd'])
+    def test_send_ifd(self, pvt_api, case):
+        order_params = self.dict2orderparams_incase(case)
+        del case['req']['parameters']
+        order_id = pvt_api.send_ifd(*order_params, **case['req'])
+
+    @pytest.mark.parametrize('case', cases['send_oco'])
+    def test_send_oco(self, pvt_api, case):
+        order_params = self.dict2orderparams_incase(case)
+        del case['req']['parameters']
+        order_id = pvt_api.send_oco(*order_params, **case['req'])
+
+    @pytest.mark.parametrize('case', cases['send_ifdoco'])
+    def test_send_ifdoco(self, pvt_api, case):
+        order_params = self.dict2orderparams_incase(case)
+        del case['req']['parameters']
+        order_id = pvt_api.send_ifdoco(*order_params, **case['req'])
+
+    def dict2orderparams_incase(self, case):
+        return [bitflyer.OrderParams(**param) for param in case["req"]["parameters"]]
 
 
 @ pytest.fixture
 def pvt_api():
-    yield bitflyer.PrivateAPI()
+    yield bitflyer.PrivateAPIWapper()
 
 
 @ pytest.fixture

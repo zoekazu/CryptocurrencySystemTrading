@@ -520,5 +520,93 @@
         "child_order_acceptance_id": "JRF20150707-050237-639234"
       }
     }
+  ],
+  "send_ifd": [
+    {
+      "req": {
+        "minute_to_expire": 10000,
+        "time_in_force": "GTC",
+        "parameters": [
+          {
+            "product_code": "ETH_JPY",
+            "condition_type": "LIMIT",
+            "side": "BUY",
+            "price": 30000,
+            "size": 0.01
+          },
+          {
+            "product_code": "ETH_JPY",
+            "condition_type": "LIMIT",
+            "side": "SELL",
+            "price": 32000,
+            "size": 0.01
+          }
+        ]
+      },
+      "res": {
+        "parent_order_acceptance_id": "JRF20150707-050237-639234"
+      }
+    }
+  ],
+  "send_oco": [
+    {
+      "req": {
+        "minute_to_expire": 10000,
+        "time_in_force": "GTC",
+        "parameters": [
+          {
+            "product_code": "ETH_JPY",
+            "condition_type": "LIMIT",
+            "side": "BUY",
+            "price": 30000,
+            "size": 0.01
+          },
+          {
+            "product_code": "ETH_JPY",
+            "condition_type": "LIMIT",
+            "side": "BUY",
+            "price": 32000,
+            "size": 0.01
+          }
+        ]
+      },
+      "res": {
+        "parent_order_acceptance_id": "JRF20150707-050237-639234"
+      }
+    }
+  ],
+  "send_ifdoco": [
+    {
+      "req": {
+        "minute_to_expire": 10000,
+        "time_in_force": "GTC",
+        "parameters": [
+          {
+            "product_code": "ETH_JPY",
+            "condition_type": "LIMIT",
+            "side": "BUY",
+            "price": 30000,
+            "size": 0.01
+          },
+          {
+            "product_code": "ETH_JPY",
+            "condition_type": "LIMIT",
+            "side": "BUY",
+            "price": 30000,
+            "size": 0.01
+          },
+          {
+            "product_code": "ETH_JPY",
+            "condition_type": "LIMIT",
+            "side": "BUY",
+            "price": 30000,
+            "size": 0.01
+          }
+        ]
+      },
+      "res": {
+        "parent_order_acceptance_id": "JRF20150707-050237-639234"
+      }
+    }
   ]
 }

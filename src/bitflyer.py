@@ -6,7 +6,7 @@ import hmac
 import json
 import time
 import urllib
-from collections import namedtuple
+from dataclasses import dataclass
 
 import keyring
 import requests
@@ -66,11 +66,32 @@ class HTTPStatusError(Exception):
     pass
 
 
-SendParams = namedtuple('SendParams', ('product_code',
-                                       'child_order_type',
-                                       'side',
-                                       'price',
-                                       'size'))
+@dataclass
+class OrderParams:
+    product_code: str
+    condition_type: str
+    side: str
+    size: float
+    price: float = None
+
+    def __post_init__(self):
+        if (self.condition_type == "LIMIT") or (self.condition_type == "STOP_LIMIT"):
+            if not self.price:
+                raise ValueError
+
+    def dump_dict(self):
+        if (self.condition_type == "LIMIT") or (self.condition_type == "STOP_LIMIT"):
+            params = {"product_code": self.product_code,
+                      "condition_type": self.condition_type,
+                      "side": self.side,
+                      "price": self.price,
+                      "size": self.size}
+        else:
+            params = {"product_code": self.product_code,
+                      "condition_type": self.condition_type,
+                      "side": self.side,
+                      "size": self.size}
+        return params
 
 
 class API(metaclass=abc.ABCMeta):
@@ -320,7 +341,9 @@ class PrivateAPI(API):
 
         return self._request(*PRIREQ_PATH_METHOD["cancelchildorder"], params=params)
 
-    def send_parentorder(self, order_method, minute_to_expire, time_in_force, *send_param):
+    def _send_parentorder(self, order_method, send_param, minute_to_expire=43200, time_in_force="GTC"):
+        # NOTE: This function is called from warraper because send_params are complicated
+
         params = {"order_method": order_method,
                   "minute_to_expire": minute_to_expire,
                   "time_in_force": time_in_force,
@@ -397,6 +420,23 @@ class PrivateAPI(API):
     def get_tradingcommission(self, product_code):
         params = {"product_code": product_code}
         return self._request(*PRIREQ_PATH_METHOD["gettradingcommission"], params=params)
+
+
+class PrivateAPIWapper(PrivateAPI):
+    def __init__(self):
+        super().__init__()
+
+    def send_ifd(self, params_1: OrderParams, params_2: OrderParams, minute_to_expire=43200, time_in_force="GTC"):
+        params = [params_1.dump_dict(), params_2.dump_dict()]
+        self._send_parentorder("IFD", params, minute_to_expire=43200, time_in_force="GTC")
+
+    def send_oco(self, params_1: OrderParams, params_2: OrderParams, minute_to_expire=43200, time_in_force="GTC"):
+        params = [params_1.dump_dict(), params_2.dump_dict()]
+        self._send_parentorder("OCO", params, minute_to_expire=43200, time_in_force="GTC")
+
+    def send_ifdoco(self, params_1: OrderParams, params_2: OrderParams, params_3: OrderParams, minute_to_expire=43200, time_in_force="GTC"):
+        params = [params_1.dump_dict(), params_2.dump_dict(), params_3.dump_dict()]
+        self._send_parentorder("IFDOCO", params, minute_to_expire=43200, time_in_force="GTC")
 
 
 class PublicAPITest:
