@@ -121,6 +121,7 @@ class PublicAPI(API):
             raise err
 
         if res.status_code == requests.codes.ok:
+            # if the response is empty, return None
             return json.loads(res.content.decode("utf-8"))
         else:
             raise HTTPStatusError('You accessed ' + url
@@ -138,11 +139,13 @@ class PublicAPI(API):
         params = {"product_code": product_code}
         return self._request(PUBREQ_PATH["getticker"], params=params)
 
-    def get_executions(self, product_code, before, after, count=COUNT_DEF):
+    def get_executions(self, product_code, before=None, after=None, count=COUNT_DEF):
         params = {"product_code": product_code,
-                  "count": count,
-                  "before": before,
-                  "after": after}
+                  "count": count}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
         return self._request(PUBREQ_PATH["getexecutions"], params=params)
 
     def get_boardstate(self, product_code):
@@ -245,23 +248,32 @@ class PrivateAPI(API):
     def get_addresses(self):
         return self._request(*PRIREQ_PATH_METHOD["getaddresses"])
 
-    def get_coinins(self, before, after, count=COUNT_DEF):
-        params = {"count": count,
-                  "before": before,
-                  "after": after}
+    def get_coinins(self, before=None, after=None, count=COUNT_DEF):
+        params = {"count": count}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
         return self._request(*PRIREQ_PATH_METHOD["getcoinins"], params=params)
 
-    def get_coinouts(self, before, after, count=COUNT_DEF):
-        params = {"count": count,
-                  "before": before,
-                  "after": after}
+    def get_coinouts(self, before=None, after=None, count=COUNT_DEF):
+        params = {"count": count}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
         return self._request(*PRIREQ_PATH_METHOD["getcoinouts"], params=params)
 
     def get_bankaccounts(self):
         return self._request(*PRIREQ_PATH_METHOD["getbankaccounts"])
 
-    def get_deposits(self, before, after, count=COUNT_DEF):
-        return self._request(*PRIREQ_PATH_METHOD["getdeposits"])
+    def get_deposits(self, before=None, after=None, count=COUNT_DEF):
+        params = {"count": count}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
+        return self._request(*PRIREQ_PATH_METHOD["getdeposits"], params=params)
 
     def withdraw(self, currency_mode, bank_account_id, amount, code=None):
         params = {"currency_mode": currency_mode,
@@ -271,10 +283,12 @@ class PrivateAPI(API):
             params["code"] = code
         return self._request(*PRIREQ_PATH_METHOD["withdraw"])
 
-    def get_withdrawals(self, before, after, count=COUNT_DEF, message_id=None):
-        params = {"count": count,
-                  "before": before,
-                  "after": after}
+    def get_withdrawals(self, before=None, after=None, count=COUNT_DEF, message_id=None):
+        params = {"count": count}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
         if message_id:
             params["message_id"] = message_id
         return self._request(*PRIREQ_PATH_METHOD["getwithdrawals"], params=params)
@@ -340,29 +354,41 @@ class PrivateAPI(API):
         params = {"product_code": product_code}
         return self._request(*PRIREQ_PATH_METHOD["cancelallchildorders"], params=params)
 
-    def get_childorders(self, product_code, count, before, after, child_order_state=None,
+    def get_childorders(self, product_code, before=None, after=None, count=COUNT_DEF, child_order_state=None,
                         child_order_id=None, child_order_acceptance_id=None, parent_order_id=None):
         params = {"product_code": product_code,
-                  "count": count,
-                  "before": before,
-                  "after": after}
-        if child_order_state:
+                  "count": count}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
+
+        param_num = sum(bool(i) for i in [child_order_state, child_order_id,
+                                          child_order_acceptance_id, parent_order_id])
+        if param_num == 0:
+            pass
+        elif param_num > 1:
+            raise ValueError
+        elif child_order_state:
             params["child_order_state"] = child_order_state
-        if child_order_id:
+        elif child_order_id:
             params["child_order_id"] = child_order_id
-        if child_order_acceptance_id:
+        elif child_order_acceptance_id:
             params["child_order_acceptance_id"] = child_order_acceptance_id
-        if parent_order_id:
+        else:  # parent_order_id == True
             params["parent_order_id"] = parent_order_id
+
         return self._request(*PRIREQ_PATH_METHOD["getchildorders"], params=params)
 
-    def get_parentorders(self, product_code, before, after, count=COUNT_DEF,
+    def get_parentorders(self, product_code, before=None, after=None, count=COUNT_DEF,
                          parent_order_state=None):
         params = {"product_code": product_code,
                   "count": count,
-                  "before": before,
-                  "after": after,
                   "parent_order_state": parent_order_state}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
         return self._request(*PRIREQ_PATH_METHOD["getparentorders"], params=params)
 
     def get_parentorder(self, parent_order_id=None, parent_order_acceptance_id=None):
@@ -374,33 +400,39 @@ class PrivateAPI(API):
             params = {"parent_order_acceptance_id": parent_order_acceptance_id}
         return self._request(*PRIREQ_PATH_METHOD["getparentorder"], params=params)
 
-    def get_executions(self, product_code, before, after, count=COUNT_DEF,
+    def get_executions(self, product_code, before=None, after=None, count=COUNT_DEF,
                        child_order_id=None, child_order_acceptance_id=None):
         params = {"product_code": product_code,
-                  "count": count,
-                  "before": before,
-                  "after": after}
+                  "count": count}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
         if child_order_id:
             params["child_order_id"] = child_order_id
         if child_order_acceptance_id:
             params["child_order_acceptance_id"] = child_order_acceptance_id
         return self._request(*PRIREQ_PATH_METHOD["getexecutions"], params=params)
 
-    def get_balancehistory(self, currency_code, before, after, count=COUNT_DEF):
+    def get_balancehistory(self, currency_code, before=None, after=None, count=COUNT_DEF):
         params = {"currency_code": currency_code,
-                  "count": count,
-                  "before": before,
-                  "after": after}
+                  "count": count}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
         return self._request(*PRIREQ_PATH_METHOD["getbalancehistory"], params=params)
 
     def get_positions(self, product_code):
         params = {"product_code": product_code}
         return self._request(*PRIREQ_PATH_METHOD["getpositions"], params=params)
 
-    def get_collateralhistory(self, before, after, count=COUNT_DEF):
-        params = {"count": count,
-                  "before": before,
-                  "after": after}
+    def get_collateralhistory(self, before=None, after=None, count=COUNT_DEF):
+        params = {"count": count}
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
         return self._request(*PRIREQ_PATH_METHOD["getcollateralhistory"], params=params)
 
     def get_tradingcommission(self, product_code):

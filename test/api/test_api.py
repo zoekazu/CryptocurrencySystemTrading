@@ -176,6 +176,10 @@ class TestPrivateAPI():
             pvt_api.send_childorder(**case['req'])
         res_status = pvt_api.cancel_allchildorders(product_code=case['req']['product_code'])
         testmt.ck_res_status(res_status)
+    
+    @pytest.mark.parametrize('case', cases['get_childorders'])
+    def test_get_childorders(self, pvt_api, case):
+        testmt.ck_res_arch(pvt_api.get_childorders, case)
 
 
 @ pytest.fixture
