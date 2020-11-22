@@ -394,12 +394,14 @@ class PrivateAPI(API):
         return self._request(*PRIREQ_PATH_METHOD["getparentorders"], params=params)
 
     def get_parentorder(self, parent_order_id=None, parent_order_acceptance_id=None):
-        if not bool(parent_order_id) ^ bool(parent_order_acceptance_id):
-            raise APIParamsError("Invaild parameters")
-        if parent_order_id:
+        if parent_order_id and parent_order_acceptance_id:
+            raise ValueError
+        elif parent_order_id:
             params = {"parent_order_id": parent_order_id}
-        else:
+        elif parent_order_acceptance_id:
             params = {"parent_order_acceptance_id": parent_order_acceptance_id}
+        else:
+            raise ValueError
         return self._request(*PRIREQ_PATH_METHOD["getparentorder"], params=params)
 
     def get_executions(self, product_code, before=None, after=None, count=COUNT_DEF,

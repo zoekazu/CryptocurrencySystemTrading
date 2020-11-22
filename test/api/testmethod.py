@@ -23,13 +23,16 @@ def ck_part_match(api_func, case):
     assert case['res'] in res
 
 
-def ck_res_arch(api_func, case):
+def ck_apires_arch(api_func, case):
     if 'req' in case.keys():
         res = api_func(**case['req'])
     else:
         res = api_func()
     assert res
+    ck_res_arch(res, case)
 
+
+def ck_res_arch(res, case):
     case_res = case['res']
 
     # if the respose is list, test representative values
