@@ -197,6 +197,26 @@ class TestPrivateAPI():
                                    parent_order_acceptance_id=order_id['parent_order_acceptance_id'])
         testmt.ck_res_arch(res, case)
 
+    @pytest.mark.parametrize('case', cases['get_pri_executions'])
+    def test_get_pri_executions(self, pvt_api, case):
+        testmt.ck_apires_arch(pvt_api.get_executions, case)
+
+    @pytest.mark.parametrize('case', cases["get_balancehistory"])
+    def test_get_balancehistory(self, pvt_api, case):
+        testmt.ck_apires_arch(pvt_api.get_balancehistory, case)
+
+    @pytest.mark.parametrize('case', cases["get_positions"])
+    def test_get_positions(self, pvt_api, case):
+        testmt.ck_apires_arch(pvt_api.get_positions, case)
+
+    @pytest.mark.parametrize('case', cases["get_collateralhistory"])
+    def test_get_collateralhistory(self, pvt_api, case):
+        testmt.ck_apires_arch(pvt_api.get_collateralhistory, case)
+
+    @pytest.mark.parametrize('case', cases["get_tradingcommission"])
+    def test_get_tradingcommission(self, pvt_api, case):
+        testmt.ck_apires_arch(pvt_api.get_tradingcommission, case)
+
 
 @ pytest.fixture
 def pvt_api():

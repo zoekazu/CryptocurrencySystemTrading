@@ -798,5 +798,114 @@
         "parent_order_acceptance_id": "JRF20150925-060559-396699"
       }
     }
+  ],
+  "get_pri_executions":[
+    {
+      "req":{
+        "product_code": "ETH_JPY"
+      },
+      "res":[
+        {
+          "id": 37233,
+          "child_order_id": "JOR20150707-060559-021935",
+          "side": "BUY",
+          "price": 33470.0,
+          "size": 0.01,
+          "commission": 0.0,
+          "exec_date": "2015-07-07T09:57:40.397",
+          "child_order_acceptance_id": "JRF20150707-060559-396699"
+        }
+      ]
+    }
+  ],
+  "get_balancehistory":[
+    {
+      "req":{
+        "currency_code": "JPY"
+      },
+      "res":[
+        {
+          "id": 1000108,
+          "trade_date": "2016-10-19T14:44:55.28",
+          "event_date": "2016-10-19T05:44:55.28",
+          "product_code": "BTC_USD",
+          "currency_code": "USD",
+          "trade_type": "SELL",
+          "price": 9999.99,
+          "amount": 99.99,
+          "quantity": 99.99,
+          "commission": 0.0,
+          "balance": 9999999.99,
+          "order_id": "JORYYYYMMDD‌-000000-000001X"
+        }
+      ]
+    }
+  ],
+  "get_positions":[
+    {
+      "req":{
+        "product_code": "FX_BTC_JPY"
+      },
+      "res":[
+        {
+          "product_code": "FX_BTC_JPY",
+          "side": "BUY",
+          "price": 36000,
+          "size": 10,
+          "commission": 0,
+          "swap_point_accumulate": -35,
+          "require_collateral": 120000,
+          "open_date": "2015-11-03T10:04:45.011",
+          "leverage": 3,
+          "pnl": 965,
+          "sfd": -0.5
+        }
+      ]
+    }
+  ],
+  "get_collateralhistory":[
+    {
+      "req":{
+        "before": 0,
+        "after": 0,
+        "count": 31
+      },
+      "res":[
+        {
+          "id": 4995,
+          "currency_code": "JPY",
+          "change": -6.0,
+          "amount": -6.0,
+          "reason_code": "CLEARING_COLL",
+          "date": "2017-05-18T02:37:41.327"
+        },
+        {
+          "id": 4994,
+          "currency_code": "JPY",
+          "change": 2083698.0,
+          "amount": 0.0,
+          "reason_code": "EXCHANGE_COLL",
+          "date": "2017-04-28T03:05:07.493"
+        },
+        {
+          "id": 4993,
+          "currency_code": "BTC",
+          "change": -14.69001618,
+          "amount": 34.97163164,
+          "reason_code": "EXCHANGE_COLL",
+          "date": "2017-04-28T03:05:07.493"
+        }
+      ]
+    }
+  ],
+  "get_tradingcommission":[
+    {
+      "req":{
+        "product_code": "ETH_JPY"
+      },
+      "res":{
+        "commission_rate": 0.001
+      }
+    }
   ]
 }

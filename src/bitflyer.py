@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import keyring
 import requests
 
+
 API_NAME = "Bitflyer"
 API_URL = "https://api.bitflyer.com"
 TIMEOUT_DEF = 5
