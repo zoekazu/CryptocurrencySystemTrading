@@ -4,13 +4,14 @@
 import calendar
 import json
 import os
+import sys
 from datetime import date, timedelta
 
 import bitflyer
 import pytest
 import requests
 
-from . import testmethod as testmt
+from . import method as mt
 
 with open(f'{os.path.dirname(__file__)}/assets/testcases_api.json', 'r', encoding="utf-8") as f:
     cases = json.load(f)
@@ -30,31 +31,31 @@ class TestPublicAPI():
             # case['res']['product_code'] = case['res']['product_code'].format(two_weeks_after_day=two_weeks_after_day,
             #                                                                  two_weeks_after_month=two_weeks_after_month,
             #                                                                  two_weeks_after_year=two_weeks_after_year)
-        testmt.ck_part_match(pub_api.get_market, case)
+        mt.ck_part_match(pub_api.get_market, case)
 
     @pytest.mark.parametrize('case', cases['get_board'])
     def test_get_board(self, pub_api, case):
-        testmt.ck_apires_arch(pub_api.get_board, case)
+        mt.ck_apires_arch(pub_api.get_board, case)
 
     @pytest.mark.parametrize('case', cases['get_ticker'])
     def test_get_ticker(self, pub_api, case):
-        testmt.ck_apires_arch(pub_api.get_ticker, case)
+        mt.ck_apires_arch(pub_api.get_ticker, case)
 
     @pytest.mark.parametrize('case', cases['get_executions'])
     def test_get_executions(self, pub_api, case):
-        testmt.ck_apires_arch(pub_api.get_executions, case)
+        mt.ck_apires_arch(pub_api.get_executions, case)
 
     @pytest.mark.parametrize('case', cases['get_boardstate'])
     def test_get_boardstate(self, pub_api, case):
-        testmt.ck_apires_arch(pub_api.get_boardstate, case)
+        mt.ck_apires_arch(pub_api.get_boardstate, case)
 
     @pytest.mark.parametrize('case', cases['get_health'])
     def test_get_health(self, pub_api, case):
-        testmt.ck_apires_arch(pub_api.get_health, case)
+        mt.ck_apires_arch(pub_api.get_health, case)
 
     @pytest.mark.parametrize('case', cases['get_chats'])
     def test_get_chats(self, pub_api, case):
-        testmt.ck_apires_arch(pub_api.get_chats, case)
+        mt.ck_apires_arch(pub_api.get_chats, case)
 
 
 class TestPrivateAPI():
@@ -67,66 +68,66 @@ class TestPrivateAPI():
 
     @pytest.mark.parametrize('case', cases['get_permissions'])
     def test_get_permissions(self, pvt_api, case):
-        testmt.ck_perfect_match(pvt_api.get_permissions, case)
+        mt.ck_perfect_match(pvt_api.get_permissions, case)
 
     @pytest.mark.xfail
     @pytest.mark.parametrize('case', cases['forbidden_permissions'])
     def test_get_permissions_forbidden(self, pvt_api, case):
-        testmt.ck_part_match(pvt_api.get_permissions, case)
+        mt.ck_part_match(pvt_api.get_permissions, case)
 
     @pytest.mark.parametrize('case', cases['get_balance'])
     def test_get_balance(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_balance, case)
+        mt.ck_apires_arch(pvt_api.get_balance, case)
 
     @pytest.mark.parametrize('case', cases['get_collateral'])
     def test_get_collateral(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_collateral, case)
+        mt.ck_apires_arch(pvt_api.get_collateral, case)
 
     @pytest.mark.skip(reason="Unimplemented function")
     @pytest.mark.parametrize('case', cases['get_collateralaccounts'])
     def test_get_collateralaccounts(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_collateralaccounts, case)
+        mt.ck_apires_arch(pvt_api.get_collateralaccounts, case)
 
     @pytest.mark.parametrize('case', cases['get_addresses'])
     def test_get_addresses(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_addresses, case)
+        mt.ck_apires_arch(pvt_api.get_addresses, case)
 
     @pytest.mark.skip(reason="Unimplemented function")
     @pytest.mark.parametrize('case', cases['get_coinins'])
     def test_get_coinins(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_coinins, case)
+        mt.ck_apires_arch(pvt_api.get_coinins, case)
 
     @pytest.mark.parametrize('case', cases['get_coinouts'])
     def test_get_coinouts(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_coinouts, case)
+        mt.ck_apires_arch(pvt_api.get_coinouts, case)
 
     @pytest.mark.parametrize('case', cases['get_bankaccounts'])
     def test_get_bankaccounts(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_bankaccounts, case)
+        mt.ck_apires_arch(pvt_api.get_bankaccounts, case)
 
     @pytest.mark.parametrize('case', cases['get_deposits'])
     def test_get_deposits(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_deposits, case)
+        mt.ck_apires_arch(pvt_api.get_deposits, case)
 
     @pytest.mark.xfail(reason="Unauthorized API")
     @pytest.mark.parametrize('case', cases['withdraw'])
     def test_withdraw(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.withraw, case)
+        mt.ck_apires_arch(pvt_api.withraw, case)
 
     @pytest.mark.xfail(reason="Unauthorized API")
     @pytest.mark.parametrize('case', cases['withdraw_err'])
     def test_withdraw_err(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.withdraw, case)
+        mt.ck_apires_arch(pvt_api.withdraw, case)
 
     @pytest.mark.xfail(reason="Unauthorized API")
     @pytest.mark.parametrize('case', cases['get_withdrawals'])
     def test_get_withdrawals(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_withdrawals, case)
+        mt.ck_apires_arch(pvt_api.get_withdrawals, case)
 
     @pytest.mark.skip(reason="Do not run transactions")
     @pytest.mark.parametrize('case', cases['send_childorder'])
     def test_send_childorder(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.send_childorder, case)
+        mt.ck_apires_arch(pvt_api.send_childorder, case)
 
     @pytest.mark.parametrize('case', cases['cancel_childorder'])
     def test_cancel_childorder(self, pvt_api, case):
@@ -134,7 +135,7 @@ class TestPrivateAPI():
         order_id = pvt_api.send_childorder(**case['req'])
         res_status = pvt_api.cancel_childorder(product_code=case['req']['product_code'],
                                                child_order_acceptance_id=order_id['child_order_acceptance_id'])
-        testmt.ck_res_status(res_status)
+        mt.ck_res_status(res_status)
 
     def dict2orderparams_incase(self, case):
         return [bitflyer.OrderParams(**param) for param in case["req"]["parameters"]]
@@ -168,22 +169,22 @@ class TestPrivateAPI():
         order_id = pvt_api.send_ifdoco(*order_params, **case['req'])
         res_status = pvt_api.cancel_parentorder(product_code=product_code,
                                                 parent_order_acceptance_id=order_id['parent_order_acceptance_id'])
-        testmt.ck_res_status(res_status)
+        mt.ck_res_status(res_status)
 
     @pytest.mark.parametrize('cases', cases['cancel_allchildorders'])
     def test_cancel_allchildorders(self, pvt_api, cases):
         for case in cases:
             pvt_api.send_childorder(**case['req'])
         res_status = pvt_api.cancel_allchildorders(product_code=case['req']['product_code'])
-        testmt.ck_res_status(res_status)
+        mt.ck_res_status(res_status)
 
     @pytest.mark.parametrize('case', cases['get_childorders'])
     def test_get_childorders(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_childorders, case)
+        mt.ck_apires_arch(pvt_api.get_childorders, case)
 
     @pytest.mark.parametrize('case', cases['get_parentorders'])
     def test_get_parentorders(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_parentorders, case)
+        mt.ck_apires_arch(pvt_api.get_parentorders, case)
 
     @pytest.mark.parametrize('case', cases['get_parentorder'])
     def test_get_parentorder(self, pvt_api, case):
@@ -195,27 +196,27 @@ class TestPrivateAPI():
             parent_order_acceptance_id=order_id['parent_order_acceptance_id'])
         pvt_api.cancel_parentorder(product_code=product_code,
                                    parent_order_acceptance_id=order_id['parent_order_acceptance_id'])
-        testmt.ck_res_arch(res, case)
+        mt.ck_res_arch(res, case)
 
     @pytest.mark.parametrize('case', cases['get_pri_executions'])
     def test_get_pri_executions(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_executions, case)
+        mt.ck_apires_arch(pvt_api.get_executions, case)
 
     @pytest.mark.parametrize('case', cases["get_balancehistory"])
     def test_get_balancehistory(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_balancehistory, case)
+        mt.ck_apires_arch(pvt_api.get_balancehistory, case)
 
     @pytest.mark.parametrize('case', cases["get_positions"])
     def test_get_positions(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_positions, case)
+        mt.ck_apires_arch(pvt_api.get_positions, case)
 
     @pytest.mark.parametrize('case', cases["get_collateralhistory"])
     def test_get_collateralhistory(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_collateralhistory, case)
+        mt.ck_apires_arch(pvt_api.get_collateralhistory, case)
 
     @pytest.mark.parametrize('case', cases["get_tradingcommission"])
     def test_get_tradingcommission(self, pvt_api, case):
-        testmt.ck_apires_arch(pvt_api.get_tradingcommission, case)
+        mt.ck_apires_arch(pvt_api.get_tradingcommission, case)
 
 
 @ pytest.fixture

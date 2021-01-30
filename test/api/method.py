@@ -1,11 +1,49 @@
 
 import inspect
+import os
+import sys
 from dataclasses import asdict, dataclass, is_dataclass
-from typing import Union
-
+from typing import Any, Dict, Union
+from enum import Enum
 import requests
 
+sys.path.append(os.path.join("..", "..", "src"))
+from bitflyer import Period, ProductCode
+
 # All function need to implement "assert"
+
+
+def encode_class_object(val: Dict[str, Any], key: str, class_object: Union[dataclass, Enum]) -> Dict[str, Any]:
+    if key in val.keys():
+        val[key] = class_object(val[key])
+    return val
+
+
+def encode_product_code(val: Dict[str, Any]) -> Dict[str, Any]:
+    return encode_class_object(val, 'product_code', ProductCode)
+
+
+def encode_period(val: Dict[str, Any]) -> Dict[str, Any]:
+    keys = val.keys()
+
+    if not ('count', 'before', 'after') & keys:
+        return val
+
+    rslt = Period
+    if 'count' in keys:
+        rslt.count = val.pop('count')
+    if 'before' in keys:
+        rslt.before = val.pop('before')
+    if 'after' in keys:
+        rslt.after = val.pop('after')
+    val['period'] = rslt
+    return val
+
+
+def encode_req(val: Dict[str, Any]) -> Dict[str, Any]:
+    for func in [encode_product_code, encode_period]:
+        val = func(val)
+    return val
 
 
 def dataclass2dict(val: Union[dict, dataclass]):
@@ -25,7 +63,7 @@ def dataclass2dict(val: Union[dict, dataclass]):
 
 def ck_perfect_match(api_func, case):
     if 'req' in case.keys():
-        res = api_func(*case['req'].values())
+        res = api_func(**encode_req(case['req']))
     else:
         res = api_func()
 
@@ -40,7 +78,7 @@ def ck_res_status(res_status):
 
 def ck_part_match(api_func, case):
     if 'req' in case.keys():
-        res = api_func(*case['req'].values())
+        res = api_func(**encode_req(case['req']))
     else:
         res = api_func()
 
@@ -53,7 +91,7 @@ def ck_part_match(api_func, case):
 
 def ck_apires_arch(api_func, case):
     if 'req' in case.keys():
-        res = api_func(**case['req'])
+        res = api_func(**encode_req(case['req']))
     else:
         res = api_func()
     assert res

@@ -139,6 +139,13 @@ class ResGetBoard:
         self.bids = [str2dataclass(ask, PriceSize) for ask in self.asks]
 
 
+@dataclass
+class Period:
+    before: int = None
+    after: int = None
+    count: int = COUNT_DEF
+
+
 @dataclass(frozen=True)
 class ResGetTicker:
     product_code: Union[str, ProductCode]
@@ -238,15 +245,12 @@ class PublicAPI(API):
         super().__init__()
         self.timeout = timeout
 
-    def _request(self, path, params=None, timeout=None):
-        if timeout is None:
-            timeout = self.timeout
-
-        url = self.api_url + path
+    def _request(self, req_http, req_params=None):
+        url = self.api_url + req_http
 
         try:
             with requests.Session() as s:
-                res = s.get(url, params=params, timeout=timeout)
+                res = s.get(url, params=req_params, timeout=self.timeout)
         except requests.RequestException as err:
             raise err
 
@@ -254,44 +258,43 @@ class PublicAPI(API):
             # if the response is empty, return None
             return json.loads(res.content.decode("utf-8"))
         else:
-            raise HTTPStatusError('You accessed ' + url
-                                  + ' but got a ' + str(res.status_code)
-                                  + ' HTTP status code error')
+            raise urllib.error.HTTPError
 
-    def _get_listed_dataclass(self, res, data_class: dataclass):
+    def _get_listed_dataclass(self, res, data_class: dataclass) -> List[dataclass]:
         return [data_class(**x) for x in res]
 
-    def get_market(self):
+    def get_market(self) -> List[ResGetMarket]:
         return self._get_listed_dataclass(self._request(PublicRequest.getmarket.value), ResGetMarket)
 
-    def get_board(self, product_code):
-        params = {"product_code": product_code}
-        return ResGetBoard(**self._request(PublicRequest.getborad.value, params=params))
+    def get_board(self, product_code: Union[str, ProductCode]) -> ResGetBoard:
+        params = {"product_code": product_code.value}
+        return ResGetBoard(**self._request(PublicRequest.getborad.value, req_params=params))
 
-    def get_ticker(self, product_code):
-        params = {"product_code": product_code}
-        return ResGetTicker(**self._request(PublicRequest.getticker.value, params=params))
+    def get_ticker(self, product_code: ProductCode) -> ResGetTicker:
+        params = {"product_code": product_code.value}
+        return ResGetTicker(**self._request(PublicRequest.getticker.value, req_params=params))
 
-    def get_executions(self, product_code, before=None, after=None, count=COUNT_DEF):
-        params = {"product_code": product_code,
-                  "count": count}
-        if before:
-            params["before"] = before
-        if after:
-            params["after"] = after
-        return self._get_listed_dataclass(self._request(PublicRequest.getexecutions.value, params=params), ResGetExecutions)
+    def get_executions(self, product_code: ProductCode, period: Period = None) -> List[ResGetExecutions]:
+        params = {"product_code": product_code.value,
+                  "count": period.count}
+        if period.before:
+            params["before"] = period.before
+        if period.after:
+            params["after"] = period.after
 
-    def get_boardstate(self, product_code):
-        params = {"product_code": product_code}
-        return ResGetBoardState(**self._request(PublicRequest.getboardstate.value, params=params))
+        return self._get_listed_dataclass(self._request(PublicRequest.getexecutions.value, req_params=params), ResGetExecutions)
 
-    def get_health(self, product_code):
-        params = {"product_code": product_code}
-        return ResGetHealth(**self._request(PublicRequest.gethealth.value, params=params))
+    def get_boardstate(self, product_code: ProductCode):
+        params = {"product_code": product_code.value}
+        return ResGetBoardState(**self._request(PublicRequest.getboardstate.value, req_params=params))
 
-    def get_chats(self, from_date=5):
+    def get_health(self, product_code: ProductCode) -> ResGetHealth:
+        params = {"product_code": product_code.value}
+        return ResGetHealth(**self._request(PublicRequest.gethealth.value, req_params=params))
+
+    def get_chats(self, from_date: int = 5) -> List[ResGetChats]:
         params = {"from_date": from_date}
-        return self._get_listed_dataclass(self._request(PublicRequest.getchats.value, params=params), ResGetChats)
+        return self._get_listed_dataclass(self._request(PublicRequest.getchats.value, req_params=params), ResGetChats)
 
 
 class PrivateAPI(API):
@@ -303,7 +306,7 @@ class PrivateAPI(API):
         self.timeout = timeout
 
     def _get_key(self):
-        key = keyring.get_password(self.api_name, self.api_name+"_id")
+        key = keyring.get_password(self.api_name, self.api_name + "_id")
         if key is None:
             raise APIConfigError('Invalid api_name of API')
         return key
