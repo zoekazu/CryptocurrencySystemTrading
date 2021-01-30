@@ -1,6 +1,26 @@
+
+import inspect
+from dataclasses import asdict, dataclass, is_dataclass
+from typing import Union
+
 import requests
 
 # All function need to implement "assert"
+
+
+def dataclass2dict(val: Union[dict, dataclass]):
+    def get_dict_factory(val):
+        if "dict_factory" in [x for x, _ in inspect.getmembers(val, inspect.ismethod)]:
+            return val.dict_factory
+        return dict
+
+    if is_dataclass(val):
+        return asdict(val, dict_factory=get_dict_factory(val))
+    if isinstance(val, list):
+        if is_dataclass(val[0]):
+            print("return", get_dict_factory(val[0]))
+            return [asdict(x, dict_factory=get_dict_factory(x)) for x in val]
+    return val
 
 
 def ck_perfect_match(api_func, case):
@@ -8,6 +28,9 @@ def ck_perfect_match(api_func, case):
         res = api_func(*case['req'].values())
     else:
         res = api_func()
+
+    res = dataclass2dict(res)
+
     assert res == case['res']
 
 
@@ -20,6 +43,11 @@ def ck_part_match(api_func, case):
         res = api_func(*case['req'].values())
     else:
         res = api_func()
+
+    res = dataclass2dict(res)
+    print(res)
+    print(case['res'])
+
     assert case['res'] in res
 
 
@@ -29,6 +57,9 @@ def ck_apires_arch(api_func, case):
     else:
         res = api_func()
     assert res
+
+    res = dataclass2dict(res)
+
     ck_res_arch(res, case)
 
 

@@ -20,16 +20,16 @@ class TestPublicAPI():
     @pytest.mark.parametrize('case', cases['get_market'])
     def test_get_market(self, pub_api, case):
         # ck_res_arch(pub_api.get_market, cases)
-        two_weeks_after = date.today() + timedelta(days=14-((date.today().weekday()+2) % 6+1))
-        two_weeks_after_day = two_weeks_after.day
-        two_weeks_after_month = calendar.month_abbr[two_weeks_after.month].upper()
-        two_weeks_after_year = two_weeks_after.year
+        # two_weeks_after = date.today() + timedelta(days=14-((date.today().weekday()+2) % 6+1))
+        # two_weeks_after_day = two_weeks_after.day
+        # two_weeks_after_month = calendar.month_abbr[two_weeks_after.month].upper()
+        # two_weeks_after_year = two_weeks_after.year
 
         if '{' in case['res']['product_code']:
             return None
-            case['res']['product_code'] = case['res']['product_code'].format(two_weeks_after_day=two_weeks_after_day,
-                                                                             two_weeks_after_month=two_weeks_after_month,
-                                                                             two_weeks_after_year=two_weeks_after_year)
+            # case['res']['product_code'] = case['res']['product_code'].format(two_weeks_after_day=two_weeks_after_day,
+            #                                                                  two_weeks_after_month=two_weeks_after_month,
+            #                                                                  two_weeks_after_year=two_weeks_after_year)
         testmt.ck_part_match(pub_api.get_market, case)
 
     @pytest.mark.parametrize('case', cases['get_board'])

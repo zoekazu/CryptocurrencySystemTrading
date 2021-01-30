@@ -7,6 +7,8 @@ import json
 import time
 import urllib
 from dataclasses import dataclass
+from enum import Enum
+from typing import List, Dict, Any, Union
 
 import keyring
 import requests
@@ -67,6 +69,133 @@ class HTTPStatusError(Exception):
     pass
 
 
+class ProductCode(Enum):
+    btc_jpy = "BTC_JPY"
+    fx_btc_jpy = "FX_BTC_JPY"
+    eth_btc = "ETH_BTC"
+    bhc_btc = "BCH_BTC"
+    eth_jpy = "ETH_JPY"
+
+
+class State(Enum):
+    runnning = "RUNNING"
+    clozed = "CLOZED"
+    starting = "STARTING"
+    preopen = "PREOPEN"
+    circuit_break = "CIRCUIT BREAK"
+    awaiting_sq = "AWAITING SQ"
+    matured = "MATURED"
+
+
+class Health(Enum):
+    normal = "NORMAL"
+    busy = "BUSY"
+    very_busy = "VERY BUSY"
+    super_busy = "SUPER BUSY"
+    no_order = "NO_ORDER"
+    stop = "STOP"
+
+
+class Side(Enum):
+    buy = "BUY"
+    sell = "SELL"
+
+# TODO: timestamp dataclass implementation
+
+
+def str2dataclass(val, data_class: dataclass):
+    if isinstance(val, str):
+        return data_class(val)
+    return val
+
+
+@dataclass(frozen=True)
+class ResGetMarket:
+    product_code: Union[str, ProductCode]
+    market_type: str
+    alias: str = None
+
+    def __pos_init__(self):
+        self.product_code = str2dataclass(self.product_code, ProductCode)
+
+    def dict_factory(self, val):
+        return dict(x for x in val if (x[0] != "alias") or (x[1] is not None))
+
+
+@dataclass(frozen=True)
+class PriceSize:
+    price: int
+    size: float
+
+
+@dataclass(frozen=True)
+class ResGetBoard:
+    mid_price: float
+    bids: List[Union[str, PriceSize]]
+    asks: List[Union[str, PriceSize]]
+
+    def __pos_init__(self):
+        self.bids = [str2dataclass(bid, PriceSize) for bid in self.bids]
+        self.bids = [str2dataclass(ask, PriceSize) for ask in self.asks]
+
+
+@dataclass(frozen=True)
+class ResGetTicker:
+    product_code: Union[str, ProductCode]
+    state: State
+    timestamp: str
+    tick_id: int
+    best_bid: float
+    best_ask: float
+    best_bid_size: float
+    best_ask_size: float
+    total_bid_depth: float
+    total_ask_depth: float
+    market_bid_size: float
+    market_ask_size: float
+    ltp: float
+    volume: float
+    volume_by_product: float
+
+    def __pos_init__(self):
+        self.product_code = str2dataclass(self.product_code, ProductCode)
+
+
+@dataclass(frozen=True)
+class ResGetExecutions:
+    id: int
+    side: Side
+    price: float
+    size: float
+    exec_date: str
+    buy_child_order_acceptance_id: str
+    sell_child_order_acceptance_id: str
+
+
+@dataclass(frozen=True)
+class ResGetBoardState:
+    health: Union[str, Health]
+    state: State
+
+    def __pos_init__(self):
+        self.health = str2dataclass(self.health, Health)
+
+
+@dataclass(frozen=True)
+class ResGetHealth:
+    status: Union[str, State]
+
+    def __pos_init__(self):
+        self.status = str2dataclass(self.status, State)
+
+
+@dataclass(frozen=True)
+class ResGetChats:
+    nickname: str
+    message: str
+    date: str
+
+
 @dataclass
 class OrderParams:
     product_code: str
@@ -82,7 +211,7 @@ class OrderParams:
 
     def dump_dict(self):
         if (self.condition_type == "LIMIT") or (self.condition_type == "STOP_LIMIT"):
-            params = {"product_code": self.product_code,
+            params = {"poduct_code": self.product_code,
                       "condition_type": self.condition_type,
                       "side": self.side,
                       "price": self.price,
@@ -129,16 +258,19 @@ class PublicAPI(API):
                                   + ' but got a ' + str(res.status_code)
                                   + ' HTTP status code error')
 
+    def _get_listed_dataclass(self, res, data_class: dataclass):
+        return [data_class(**x) for x in res]
+
     def get_market(self):
-        return self._request(PUBREQ_PATH["getmarket"])
+        return self._get_listed_dataclass(self._request(PUBREQ_PATH["getmarket"]), ResGetMarket)
 
     def get_board(self, product_code):
         params = {"product_code": product_code}
-        return self._request(PUBREQ_PATH["board"], params=params)
+        return ResGetBoard(**self._request(PUBREQ_PATH["board"], params=params))
 
     def get_ticker(self, product_code):
         params = {"product_code": product_code}
-        return self._request(PUBREQ_PATH["getticker"], params=params)
+        return ResGetTicker(**self._request(PUBREQ_PATH["getticker"], params=params))
 
     def get_executions(self, product_code, before=None, after=None, count=COUNT_DEF):
         params = {"product_code": product_code,
@@ -147,19 +279,19 @@ class PublicAPI(API):
             params["before"] = before
         if after:
             params["after"] = after
-        return self._request(PUBREQ_PATH["getexecutions"], params=params)
+        return self._get_listed_dataclass(self._request(PUBREQ_PATH["getexecutions"], params=params), ResGetExecutions)
 
     def get_boardstate(self, product_code):
         params = {"product_code": product_code}
-        return self._request(PUBREQ_PATH["getboardstate"], params=params)
+        return ResGetBoardState(**self._request(PUBREQ_PATH["getboardstate"], params=params))
 
     def get_health(self, product_code):
         params = {"product_code": product_code}
-        return self._request(PUBREQ_PATH["gethealth"], params=params)
+        return ResGetHealth(**self._request(PUBREQ_PATH["gethealth"], params=params))
 
     def get_chats(self, from_date=5):
         params = {"from_date": from_date}
-        return self._request(PUBREQ_PATH["getchats"], params=params)
+        return self._get_listed_dataclass(self._request(PUBREQ_PATH["getchats"], params=params), ResGetChats)
 
 
 class PrivateAPI(API):
