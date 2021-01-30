@@ -8,26 +8,26 @@ import time
 import urllib
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Dict, Any, Union
+from typing import Any, Dict, List, Union
 
 import keyring
 import requests
-
 
 API_NAME = "Bitflyer"
 API_URL = "https://api.bitflyer.com"
 TIMEOUT_DEF = 5
 COUNT_DEF = 100
 
-PUBREQ_PATH = {
-    "getmarket": "/v1/getmarkets",
-    "board": "/v1/getboard",
-    "getticker": "/v1/getticker",
-    "getexecutions": "/v1/getexecutions",
-    "getboardstate": "/v1/getboardstate",
-    "gethealth": "/v1/gethealth",
-    "getchats": "/v1/getchats"
-}
+
+class PublicRequest(Enum):
+    getmarket = "/v1/getmarkets"
+    getborad = "/v1/getboard"
+    getticker = "/v1/getticker"
+    getexecutions = "/v1/getexecutions"
+    getboardstate = "/v1/getboardstate"
+    gethealth = "/v1/gethealth"
+    getchats = "/v1/getchats"
+
 
 PRIREQ_PATH_METHOD = {
     "getpermissions": ["/v1/me/getpermissions", "GET"],
@@ -262,15 +262,15 @@ class PublicAPI(API):
         return [data_class(**x) for x in res]
 
     def get_market(self):
-        return self._get_listed_dataclass(self._request(PUBREQ_PATH["getmarket"]), ResGetMarket)
+        return self._get_listed_dataclass(self._request(PublicRequest.getmarket.value), ResGetMarket)
 
     def get_board(self, product_code):
         params = {"product_code": product_code}
-        return ResGetBoard(**self._request(PUBREQ_PATH["board"], params=params))
+        return ResGetBoard(**self._request(PublicRequest.getborad.value, params=params))
 
     def get_ticker(self, product_code):
         params = {"product_code": product_code}
-        return ResGetTicker(**self._request(PUBREQ_PATH["getticker"], params=params))
+        return ResGetTicker(**self._request(PublicRequest.getticker.value, params=params))
 
     def get_executions(self, product_code, before=None, after=None, count=COUNT_DEF):
         params = {"product_code": product_code,
@@ -279,19 +279,19 @@ class PublicAPI(API):
             params["before"] = before
         if after:
             params["after"] = after
-        return self._get_listed_dataclass(self._request(PUBREQ_PATH["getexecutions"], params=params), ResGetExecutions)
+        return self._get_listed_dataclass(self._request(PublicRequest.getexecutions.value, params=params), ResGetExecutions)
 
     def get_boardstate(self, product_code):
         params = {"product_code": product_code}
-        return ResGetBoardState(**self._request(PUBREQ_PATH["getboardstate"], params=params))
+        return ResGetBoardState(**self._request(PublicRequest.getboardstate.value, params=params))
 
     def get_health(self, product_code):
         params = {"product_code": product_code}
-        return ResGetHealth(**self._request(PUBREQ_PATH["gethealth"], params=params))
+        return ResGetHealth(**self._request(PublicRequest.gethealth.value, params=params))
 
     def get_chats(self, from_date=5):
         params = {"from_date": from_date}
-        return self._get_listed_dataclass(self._request(PUBREQ_PATH["getchats"], params=params), ResGetChats)
+        return self._get_listed_dataclass(self._request(PublicRequest.getchats.value, params=params), ResGetChats)
 
 
 class PrivateAPI(API):
