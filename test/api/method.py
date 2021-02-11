@@ -3,12 +3,11 @@ import inspect
 import os
 import sys
 from dataclasses import asdict, dataclass, is_dataclass
-from typing import Any, Dict, Union
 from enum import Enum
-import requests
+from typing import Any, Dict, Union
 
-sys.path.append(os.path.join("..", "..", "src"))
-from bitflyer import Period, ProductCode
+import requests
+from bitflyer_pub import Period, ProductCode
 
 # All function need to implement "assert"
 

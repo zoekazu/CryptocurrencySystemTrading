@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
-
 import calendar
 import json
 import os
 import sys
 from datetime import date, timedelta
 
-import bitflyer
 import pytest
-import requests
 
+import bitflyer_pub
+import bitflyer_pvt
 from . import method as mt
 
 with open(f'{os.path.dirname(__file__)}/assets/testcases_api.json', 'r', encoding="utf-8") as f:
@@ -18,6 +17,7 @@ with open(f'{os.path.dirname(__file__)}/assets/testcases_api.json', 'r', encodin
 
 
 class TestPublicAPI():
+    
     @pytest.mark.parametrize('case', cases['get_market'])
     def test_get_market(self, pub_api, case):
         # ck_res_arch(pub_api.get_market, cases)
@@ -138,7 +138,7 @@ class TestPrivateAPI():
         mt.ck_res_status(res_status)
 
     def dict2orderparams_incase(self, case):
-        return [bitflyer.OrderParams(**param) for param in case["req"]["parameters"]]
+        return [bitflyer_pvt.OrderParams(**param) for param in case["req"]["parameters"]]
 
     @pytest.mark.skip(reason="Do not run transactions")
     @pytest.mark.parametrize('case', cases['send_ifd'])
@@ -221,9 +221,9 @@ class TestPrivateAPI():
 
 @ pytest.fixture
 def pvt_api():
-    yield bitflyer.PrivateAPIWapper()
+    yield bitflyer_pvt.PrivateAPIWapper()
 
 
 @ pytest.fixture
 def pub_api():
-    yield bitflyer.PublicAPI()
+    yield bitflyer_pub.PublicAPI()

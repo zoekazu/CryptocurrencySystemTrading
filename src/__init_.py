@@ -2,7 +2,7 @@
 import glob
 import os
 
-from . import bitflyer
+from . import *
 
 __all__ = [
     os.path.split(os.path.splitext(file)[0])[1]
